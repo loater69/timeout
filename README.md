@@ -1,5 +1,5 @@
 
-# A js-like setTimeout function
+# A Js-like setTimeout function
 
 This library exposes a setTimeout function to the global namespace.
 
