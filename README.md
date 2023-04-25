@@ -12,7 +12,7 @@ using namespace std::chrono_literals;
 
 setTimeout([] {
     // code ...
-}, 5s); // 5 seconds delay
+}, 5s); // 5 second delay
 ```
 
 setTimeout is also able to pass parameters to the function to be executed:
