@@ -1,7 +1,7 @@
 
 # A js-like setTimeout function
 
-    This library exposes a setTimeout function to the global namespace.
+This library exposes a setTimeout function to the global namespace.
 
 # How to use
 
