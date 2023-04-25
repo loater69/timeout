@@ -1,0 +1,51 @@
+#ifndef TIMEOUT_IMPL
+#define TIMEOUT_IMPL
+
+#include <coroutine>
+#include <thread>
+#include <functional>
+
+namespace timeout_impl_local {
+    struct void_awaitable {
+        struct promise_type {
+            constexpr inline std::suspend_never initial_suspend() { return {}; }
+            constexpr inline std::suspend_never final_suspend() noexcept { return {}; }
+            inline void unhandled_exception() {
+                throw std::current_exception();
+            }
+
+            constexpr inline void return_void() {}
+
+            constexpr inline void_awaitable get_return_object() { return {}; }
+        };
+    };
+
+    template<typename duration_arg>
+    auto delay(std::chrono::duration<duration_arg> dur) {
+        struct awaiter {
+            constexpr bool await_ready() {
+                return false;
+            }
+
+            constexpr void await_resume() {}
+
+            void await_suspend(std::coroutine_handle<> handle) {
+                std::thread([handle, this] {
+                    std::this_thread::sleep_for(duration);
+                    handle();
+                }).detach();
+            }
+            std::chrono::duration<duration_arg> duration;
+        };
+
+        return awaiter{dur};
+    }
+}
+
+template<typename... args>
+timeout_impl_local::void_awaitable setTimeout(auto function, std::chrono::duration<double> duration, args&&... Args) {
+    co_await timeout_impl_local::delay<double>(duration);
+    function(Args...);
+}
+
+#endif
